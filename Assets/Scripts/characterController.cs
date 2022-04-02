@@ -10,8 +10,13 @@ public class characterController : MonoBehaviour
     public Vector3 inputVec;
 
     private Vector3 moveDirection = Vector3.zero;
-    [SerializeField] float jumpSpeed = 8.0f;
-    [SerializeField] float gravity = 20.0f;
+
+    public bool jump;
+    [SerializeField] float jumpSpeed = 5.0f;
+    [SerializeField] float gravity = 9.81f;
+
+    public float maxTime = 0.5f;
+    private float curTime = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -24,17 +29,27 @@ public class characterController : MonoBehaviour
         inputVec = input.Get<Vector2>();
     }
 
-    public void OnJump(InputValue input)
+    public void OnJump()
     {
-        //moveDirection.y = jumpSpeed;
+        Debug.Log("1");
+        jump = true;
     }
 
     private void FixedUpdate()
     {
+        
         if (cc.isGrounded)
         {
+            transform.rotation = Quaternion.Lerp(Quaternion.LookRotation(moveDirection), Quaternion.identity, curTime /maxTime);
+
             moveDirection = new Vector3(inputVec.x, 0.0f, inputVec.y);
             moveDirection *= 10.0f;
+
+            if (jump)
+            {
+                moveDirection.y += Mathf.Sqrt(jumpSpeed * gravity);
+                jump = false;
+            }
         }
         // Face in dir of move
         if (moveDirection.magnitude > float.Epsilon)
@@ -51,6 +66,6 @@ public class characterController : MonoBehaviour
         // Update is called once per frame
         void Update()
     {
-        
+        curTime = Mathf.Clamp(curTime + Time.deltaTime, 0.0f, maxTime);
     }
 }
