@@ -7,6 +7,8 @@ public class characterController : MonoBehaviour
 {
     CharacterController cc;
 
+    Animator animator;
+
     public Vector3 inputVec;
 
     private Vector3 moveDirection = Vector3.zero;
@@ -22,6 +24,7 @@ public class characterController : MonoBehaviour
     void Start()
     {
         cc = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
     }
 
     public void OnMove(InputValue input)
@@ -31,16 +34,16 @@ public class characterController : MonoBehaviour
 
     public void OnJump()
     {
-        Debug.Log("1");
         jump = true;
     }
 
     private void FixedUpdate()
     {
-        
+        animator.SetBool("Grounded", cc.isGrounded);
+
         if (cc.isGrounded)
         {
-            transform.rotation = Quaternion.Lerp(Quaternion.LookRotation(moveDirection), Quaternion.identity, curTime /maxTime);
+            animator.SetFloat("MoveSpeed", moveDirection.magnitude);
 
             moveDirection = new Vector3(inputVec.x, 0.0f, inputVec.y);
             moveDirection *= 10.0f;
