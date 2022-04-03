@@ -11,7 +11,6 @@ public class cameraFollow : MonoBehaviour
     
     //Player's position
     public Transform player;
-
     private Vector3 offset;
 
     private void Awake()

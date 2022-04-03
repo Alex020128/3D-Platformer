@@ -6,19 +6,14 @@ using UnityEngine.InputSystem;
 public class characterController : MonoBehaviour
 {
     CharacterController cc;
-
     Animator animator;
-
     public Vector3 inputVec;
-
     private Vector3 moveDirection = Vector3.zero;
-
     public bool jump;
+    //Player stats
+    [SerializeField] float moveSpeed = 7.0f;
     [SerializeField] float jumpSpeed = 5.0f;
     [SerializeField] float gravity = 9.81f;
-
-    public float maxTime = 0.5f;
-    private float curTime = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -27,11 +22,14 @@ public class characterController : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    //Character movement
     public void OnMove(InputValue input)
     {
+        //Access the inputs to determine movement
         inputVec = input.Get<Vector2>();
     }
 
+    //Character jump
     public void OnJump()
     {
         jump = true;
@@ -39,18 +37,23 @@ public class characterController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //Set animator bool as the situation of isGrounded
         animator.SetBool("Grounded", cc.isGrounded);
 
+        //When player is on the ground
         if (cc.isGrounded)
         {
+            //Plays the run animation when moveSpeed is larger than idle value
             animator.SetFloat("MoveSpeed", moveDirection.magnitude);
-
+            //Move according to the inputs
             moveDirection = new Vector3(inputVec.x, 0.0f, inputVec.y);
-            moveDirection *= 10.0f;
-
+            moveDirection *= moveSpeed;
+            //When player jumps
             if (jump)
             {
+                //Apply force in the y axis
                 moveDirection.y += Mathf.Sqrt(jumpSpeed * gravity);
+                //Make sure player doesn't jump in the air
                 jump = false;
             }
         }
@@ -60,15 +63,16 @@ public class characterController : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(moveDirection);
         }
 
+        //Apply gravity
         moveDirection.y -= gravity * Time.fixedDeltaTime;
-
+        //Move using character controller
         cc.Move(moveDirection * Time.fixedDeltaTime);
     }
 
 
-        // Update is called once per frame
-        void Update()
+    // Update is called once per frame
+    void Update()
     {
-        curTime = Mathf.Clamp(curTime + Time.deltaTime, 0.0f, maxTime);
+    
     }
 }
