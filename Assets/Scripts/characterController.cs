@@ -51,12 +51,15 @@ public class characterController : MonoBehaviour
             //When player jumps
             if (jump)
             {
+                //Change to jump animation
+                animator.SetTrigger("Jump");
                 //Apply force in the y axis
                 moveDirection.y += Mathf.Sqrt(jumpSpeed * gravity);
                 //Make sure player doesn't jump in the air
                 jump = false;
             }
         }
+
         // Face in dir of move
         if (moveDirection.magnitude > float.Epsilon)
         {
@@ -73,6 +76,5 @@ public class characterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-    
     }
 }
