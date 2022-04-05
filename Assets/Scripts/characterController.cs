@@ -60,11 +60,13 @@ public class characterController : MonoBehaviour
             }
         }
 
-        // Face in dir of move
-        if (moveDirection.magnitude > float.Epsilon)
-        {
-            transform.rotation = Quaternion.LookRotation(moveDirection);
+        // Face in dir of move (make sure moveDirection.y doesn't affect it)
+        if (new Vector3(moveDirection.x,0, moveDirection.z).magnitude > float.Epsilon){
+          transform.rotation = Quaternion.LookRotation(moveDirection);
         }
+        //Lerps the rotation back to 0
+        Vector3 angle = transform.rotation.eulerAngles;
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, angle.y, angle.z)), 2 * Time.fixedDeltaTime);
 
         //Apply gravity
         moveDirection.y -= gravity * Time.fixedDeltaTime;
